@@ -1,45 +1,41 @@
 <?php
-	if ($_GET['user'] != null) {
-		if($_GET['pass'])echo $_GET['user'];
+	if ($_GET['submit'] == "1" ) {
 		//Open mySQL connection
 		//Do query based on what is in $_GET['value']
 		//Return/echo query results as HTML
+		if($_GET['user'] != "-1"){
+			if($_GET['pass'] != "-1"){
+				//check database against username and password
+			}
+		}
+		else{
+			echo "No Username Found\n";
+		}
+		if($_GET['pass'] == "-1"){
+			echo "No Password found\n";
+		}
 	}
 	else { ?>
 <html>
 	<body>
 	<script>
-	function getHint(str) {
-		if (str.length == 0) {
-			return;
-		}
-		else {
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange= function() {
-				if (this.readyState == 4 && this.status == 200) {
-					document.getElementById("txtHint").innerHTML = this.responseText;
-				}
-			};
-			xmlhttp.open("GET", "login.php?query=1&value=" + str, true);
-			xmlhttp.send();
-		}
-	}
 	function userLogin(usr, psswd){
 		//Database data types Salt, Username, Password
-		if (usr.length == 0 || psswd.length == 0) {
-			return;
-		}
-		else {
+			if(usr.length == 0){
+				usr = "-1";
+			}
+			if(psswd.length == 0){
+				psswd = "-1";
+			}
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange= function() {
 				if (this.readyState == 4 && this.status == 200) {
 					document.getElementById("txtHint").innerHTML = this.responseText;
 				}
 			};
-			xmlhttp.open("GET", "login.php?user="+usr+"&pass=" + psswd, true);
+			xmlhttp.open("GET", "login.php?submit=1&user="+usr+"&pass=" + psswd, true);
 			xmlhttp.send();
 		}
-	}
 		</script>
 		<h1>MINESWEEPER</h1>
 		<p>
