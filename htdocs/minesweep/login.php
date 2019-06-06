@@ -1,11 +1,25 @@
 <?php
+	session_start();
+	$servername = "sql108.epizy.com";
+	$username = "epiz_23868829";
+	$password = "6hnqPSeeD";
+	$dbname = "epiz_23868829_3750stoor";
+	$conn=mysqli_connect($servername, $username, $password, $dbname);
+
+	if($conn->connect_error){
+		die("Connection failed: " . $conn->connect_error);
+	}
+
+
+
 	if ($_GET['submit'] == "1" ) {
-		//Open mySQL connection
-		//Do query based on what is in $_GET['value']
-		//Return/echo query results as HTML
 		if($_GET['user'] != "-1"){
+			$query = "SELECT Username FROM MinesweepUsers WHERE Username = " + $_GET['user'];
+			if($_GET['user'] == $conn->query($query)){
+				echo "Wow that actually worked";
+			}
 			if($_GET['pass'] != "-1"){
-				//check database against username and password
+
 			}
 		}
 		else{
