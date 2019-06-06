@@ -1,0 +1,11 @@
+table, th, td {
+  border: 1px solid black;
+}
+
+table {
+  background-color: powderblue
+}
+
+td {
+  background-color: blue
+}

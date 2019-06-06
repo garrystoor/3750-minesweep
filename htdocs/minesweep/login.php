@@ -10,14 +10,25 @@
 		die("Connection failed: " . $conn->connect_error);
 	}
 
-
-
 	if ($_GET['submit'] == "1" ) {
 		if($_GET['user'] != "-1"){
-			$query = "SELECT Username FROM MinesweepUsers WHERE Username = " + $_GET['user'];
-			if($_GET['user'] == $conn->query($query)){
-				echo "Wow that actually worked";
+			$user=$_GET['user'];
+			$query = "SELECT Password FROM MinesweepUsers WHERE Username='$user'";
+			$result = $conn->query($query);
+			if($result->num_rows > 0){
+				while($row = $result->fetch_assoc()){
+					if($row['Password'] == $_GET['pass']){
+						echo "Switching pages";
+						// header("Location: http://3750stoor.epizy.com/minesweep/minesweep.php");
+					}
+					else{
+					}
+				}
 			}
+			else{
+				//code if query failed
+			}
+
 			if($_GET['pass'] != "-1"){
 
 			}
