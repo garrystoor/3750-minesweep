@@ -1,5 +1,12 @@
+<html>
+	<body>
 <?php
 	session_start();
+
+	if($_SESSION['user'] != null){
+		header("Location: http://3750stoor.epizy.com/minesweep/minesweeper.php");
+	}
+
 	$servername = "sql108.epizy.com";
 	$username = "epiz_23868829";
 	$password = "6hnqPSeeD";
@@ -18,32 +25,25 @@
 			if($result->num_rows > 0){
 				while($row = $result->fetch_assoc()){
 					if($row['Password'] == $_GET['pass']){
-						echo "Switching pages";
-						// header("Location: http://3750stoor.epizy.com/minesweep/minesweep.php");
+						$_SESSION['user'] = $_GET['user'];
 					}
 					else{
+						echo "Bad username or password";
 					}
 				}
 			}
 			else{
-				//code if query failed
-			}
-
-			if($_GET['pass'] != "-1"){
-
+				echo "Bad username or password";
 			}
 		}
 		else{
-			echo "No Username Found\n";
-		}
-		if($_GET['pass'] == "-1"){
-			echo "No Password found\n";
+			echo "Bad username or password";
 		}
 	}
-	else { ?>
-<html>
-	<body>
-	<script>
+	else {
+		?>
+
+	<script type="text/javascript">
 	function userLogin(usr, psswd){
 		//Database data types Salt, Username, Password
 			if(usr.length == 0){
@@ -60,7 +60,13 @@
 			};
 			xmlhttp.open("GET", "login.php?submit=1&user="+usr+"&pass=" + psswd, true);
 			xmlhttp.send();
+			setTimeout(location.reload.bind(location), 500);
 		}
+
+		function createUser(){
+			window.location.href="http//3750stoor.epizy.com/minesweep/createUser.php";
+		}
+
 		</script>
 		<h1>MINESWEEPER</h1>
 		<p>
@@ -71,11 +77,12 @@
 		<br><br>
 		<input type="button" value="Login" name="login" onclick="userLogin(user.value, password.value)">
 		<br>
-		<input type="button" value="New User" name="newUser" onclick="">
+		<input type="button" value="New User" name="newUser" onclick="createUser()>"
 		</form>
 		<p><span id="txtHint"></span></p>
 		</p>
 	</body>
 </html>
 
-<?php } ?>
+<?php
+} ?>
