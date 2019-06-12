@@ -59,6 +59,7 @@ function leftClickSquare(squareID){
   }
   else if(mines[myRow][myColumn] == -1) {
     document.getElementById(squareID).style.backgroundColor = 'black'
+    document.getElementById(squareID).clicked = true;
     //TODO: IMPLEMENT GAME OVER CODE
   }
 
