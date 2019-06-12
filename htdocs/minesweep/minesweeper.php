@@ -113,7 +113,7 @@ function adjacentSquares(squareID){
         surroundingBombs++
     }
 
-
+    mines[myRow][myColumn] = surroundingBombs
     document.getElementById(squareID).innerHTML = surroundingBombs
   }
 }
