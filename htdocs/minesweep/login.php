@@ -6,42 +6,7 @@
 	if($_SESSION['user'] != null){
 		header("Location: http://3750stoor.epizy.com/minesweep/minesweeper.php");
 	}
-
-	$servername = "sql108.epizy.com";
-	$username = "epiz_23868829";
-	$password = "6hnqPSeeD";
-	$dbname = "epiz_23868829_3750stoor";
-	$conn=mysqli_connect($servername, $username, $password, $dbname);
-
-	if($conn->connect_error){
-		die("Connection failed: " . $conn->connect_error);
-	}
-
-	if ($_GET['submit'] == "1" ) {
-		if($_GET['user'] != "-1"){
-			$user=$_GET['user'];
-			$query = "SELECT Password FROM MinesweepUsers WHERE Username='$user'";
-			$result = $conn->query($query);
-			if($result->num_rows > 0){
-				while($row = $result->fetch_assoc()){
-					if($row['Password'] == $_GET['pass']){
-						$_SESSION['user'] = $_GET['user'];
-					}
-					else{
-						echo "Bad username or password";
-					}
-				}
-			}
-			else{
-				echo "Bad username or password";
-			}
-		}
-		else{
-			echo "Bad username or password";
-		}
-	}
-	else {
-		?>
+	?>
 
 	<script type="text/javascript">
 	function userLogin(usr, psswd){
@@ -60,29 +25,65 @@
 			};
 			xmlhttp.open("GET", "login.php?submit=1&user="+usr+"&pass=" + psswd, true);
 			xmlhttp.send();
-			setTimeout(location.reload.bind(location), 500);
-		}
-
-		function createUser(){
-			window.location.href="http//3750stoor.epizy.com/minesweep/createUser.php";
+			setTimeout(function(){window.location.href = 'http://3750stoor.epizy.com/minesweep/login.php?submit=1'}, 500);
 		}
 
 		</script>
 		<h1>MINESWEEPER</h1>
 		<p>
 		<form>
-		Username: <input id="user" type="text" autofocus>
-		<br><br>
-		Password: <input id="password" type="password">
-		<br><br>
-		<input type="button" value="Login" name="login" onclick="userLogin(user.value, password.value)">
-		<br>
-		<input type="button" value="New User" name="newUser" onclick="createUser()>"
+			Username: <input id="user" type="text" autofocus>
+			<br><br>
+			Password: <input id="password" type="password">
+			<br><br>
+			<input type="button" value="Login" name="login" onclick="userLogin(user.value, password.value)">
 		</form>
-		<p><span id="txtHint"></span></p>
+		<form action="http://3750stoor.epizy.com/minesweep/createUser.php" method="get">
+			<input type="submit" value="New User" name="newUser">
+		</form>
 		</p>
-	</body>
-</html>
+
 
 <?php
-} ?>
+	$servername = "sql108.epizy.com";
+	$username = "epiz_23868829";
+	$password = "6hnqPSeeD";
+	$dbname = "epiz_23868829_3750stoor";
+	$conn=mysqli_connect($servername, $username, $password, $dbname);
+
+	if($conn->connect_error){
+		die("Connection failed: " . $conn->connect_error);
+	}
+	
+	if ($_GET['submit'] == "1" ) {
+		if($_GET['user'] != "-1"){
+			$user=$_GET['user'];
+			$query = "SELECT Password FROM MinesweepUsers WHERE Username='$user'";
+			$result = $conn->query($query);
+			if($result->num_rows > 0){
+				while($row = $result->fetch_assoc()){
+					if($row['Password'] == $_GET['pass']){
+						$_SESSION['user'] = $_GET['user'];
+					}
+					else{
+						?>
+							<p>Bad username or password</p>
+						<?php
+					}
+				}
+			}
+			else{
+				?>
+					<p>Bad username or password</p>
+				<?php
+			}
+		}
+		else{
+			?>
+				<p>Bad username or password</p>
+			<?php
+		}
+	}
+ ?>
+ 	</body>
+</html>
