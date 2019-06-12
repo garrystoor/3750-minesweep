@@ -1,3 +1,5 @@
+
+
 <html>
 	<body>
 <?php
@@ -9,20 +11,21 @@
 	?>
 
 	<script type="text/javascript">
-	require(['./sha256.js'], function(sha256) {
-	// ...
-	});
-	function userLogin(usr, psswd, pass){
-		//Database data types Salt, Username, Password
+		var imported = document.createElement('script');
+		imported.src = './sha256.js';
+		document.head.appendChild(imported);
+		function userLogin(usr, psswd, pass){
+			//Database data types Salt, Username, Password
 			if(psswd != pass){
 				setTimeout(function(){window.location.href = 'http://3750stoor.epizy.com/minesweep/createUser.php?submit=1&fail=noMatch'}, 500);
 			}
 			if(pass == "" || psswd == ""){
 				setTimeout(function(){window.location.href = 'http://3750stoor.epizy.com/minesweep/createUser.php?submit=1&user='+usr+'&pass='}, 500);
 			}
-			//var hash = sha256.create();
-			//hash.update(pssed);
-			//pass = sha256(psswd);
+			var hash = sha256(psswd);
+			for(var i = 0; i < 10; i++){
+				hash = sha256(hash);
+			}
 			
 			setTimeout(function(){window.location.href = 'http://3750stoor.epizy.com/minesweep/createUser.php?submit=1&user='+usr+'&pass='+hash}, 500);
 		}
@@ -37,7 +40,10 @@
 		<br><br>
 		Confirm Password: <input id="password2" type="password">
 		<br><br>
-		<input type="button" value="Login" name="login" onclick="userLogin(user.value, password.value, password2.value)">
+		<input type="button" value="Create" name="login" onclick="userLogin(user.value, password.value, password2.value)">
+		</form>
+		<form action="http://3750stoor.epizy.com/minesweep/login.php" method="get">
+			<input type="submit" value="Back to Login" name="login">
 		</form>
 		</p>
 
@@ -75,9 +81,24 @@
 						}
 					}
 					else{
-						echo $_GET['pass'];
-						echo hash('sha256', $_GET['pass']);
-						//works in php
+						//insert username into table
+						$query = "INSERT INTO MinesweepUsers (Username, Password) VALUES ('$user', NULL)";
+						$result = $conn->query($query);
+						//get salt attached to username
+						$query = "SELECT Salt FROM MinesweepUsers WHERE Username='$user'";
+						$result = $conn->query($query);
+						$row = $result->fetch_assoc();
+						//hash password with salt
+						$toHash = $_GET['pass'] . "" . $row['Salt'];
+						for($i = 0; $i < 10; $i++){
+							$pass = hash('sha256', $toHash);
+							$toHash = $pass . "" . $row['Salt'];
+						}
+						//insert password into database
+						$query = "UPDATE MinesweepUsers SET Password='$pass' WHERE Username='$user'";
+						$result = $conn->query($query);
+						//auto-login user with username
+						$_SESSION['user'] = $user;
 					}
 				}
 				else{

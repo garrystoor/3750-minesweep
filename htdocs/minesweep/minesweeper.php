@@ -28,7 +28,7 @@ session_destroy();
   var tbl = document.getElementById('gameBoard')
   var row
   var cell
-  var mines = [[],[]]
+  var mines = new Array(boardSize)
   var boardIndex = 0
   // rows
   for(var i = 0; i < boardSize; i++) {
@@ -37,6 +37,10 @@ session_destroy();
     for(var j = 0; j < boardSize; j++) {
       cell = row.insertCell(j)
       cell.id = boardIndex++
+      cell.clicked = false
+      cell.flagged = false
+      cell.row = i
+      cell.column = j
       //cell.addEventListener("click",function(){clickSquare(cell.id)})
       cell.setAttribute("onclick","leftClickSquare(" + cell.id + ")")
       cell.setAttribute("oncontextmenu","rightClickSquare(" + cell.id + ")")
@@ -48,35 +52,77 @@ setMines()
 
 
 function leftClickSquare(squareID){
-  var myRow = document.getElementById(squareID).rowIndex
-  var myCell = document.getElementById(squareID).cellIndex
+  var myRow = document.getElementById(squareID).row
+  var myColumn = document.getElementById(squareID).column
   if(document.getElementById(squareID).style.backgroundColor == 'red') {
     // already flagged
   }
-  else if(mines[myRow][myCell] == -1) {
+  else if(mines[myRow][myColumn] == -1) {
     document.getElementById(squareID).style.backgroundColor = 'black'
+    //TODO: IMPLEMENT GAME OVER CODE
   }
 
   else {
     document.getElementById(squareID).style.backgroundColor = 'green'
+    adjacentSquares(squareID)
+    document.getElementById(squareID).clicked = true;
   }
 
 }
 
 function rightClickSquare(squareID) {
-  if(document.getElementById(squareID).style.backgroundColor != 'red') {
-    document.getElementById(squareID).style.backgroundColor = 'red'
-  }
-  else {
+  if(document.getElementById(squareID).flagged) {
     document.getElementById(squareID).style.backgroundColor = 'blue'
+    document.getElementById(squareID).flagged = false
+  }
+  else if(!document.getElementById(squareID).clicked) {
+    document.getElementById(squareID).style.backgroundColor = 'red'
+    document.getElementById(squareID).flagged = true
   }
 }
 
 function adjacentSquares(squareID){
+  var myRow = document.getElementById(squareID).row
+  var myColumn = document.getElementById(squareID).column
+  var surroundingBombs = 0
+  if(mines[myRow][myColumn] == -1) {
+    //Game Over, adjacentSquares shouldn't be called here
+  }
+  else {
 
+    if(myRow != 0){
+      if (mines[myRow-1][myColumn-1] == -1)
+        surroundingBombs++
+      if (mines[myRow-1][myColumn] == -1)
+        surroundingBombs++
+      if (mines[myRow-1][myColumn+1] == -1)
+        surroundingBombs++
+    }
+
+    if (mines[myRow][myColumn-1] == -1)
+      surroundingBombs++
+    if (mines[myRow][myColumn+1] == -1)
+      surroundingBombs++
+
+    if(myRow != boardSize-1){
+      if (mines[myRow+1][myColumn-1] == -1)
+        surroundingBombs++
+      if (mines[myRow+1][myColumn] == -1)
+        surroundingBombs++
+      if (mines[myRow+1][myColumn+1] == -1)
+        surroundingBombs++
+    }
+
+
+    document.getElementById(squareID).innerHTML = surroundingBombs
+  }
 }
 
 function setMines(){
+  for (var i = 0; i < mines.length; i++) {
+    mines[i] = new Array(boardSize);
+}
+
   for(var i = 0; i < boardSize; i++){
     for(var j = 0; j < boardSize; j++)
       mines[i][j] = 0
@@ -84,12 +130,12 @@ function setMines(){
   var mineCount = 0
   while(mineCount < boardSize) {
     var randomRow = Math.floor(Math.random() * boardSize);
-    var randomCell = Math.floor(Math.random() * boardSize)
-    if (mines[randomRow][randomCell] == -1){
+    var randomColumn = Math.floor(Math.random() * boardSize)
+    if (mines[randomRow][randomColumn] == -1){
       // already set to a mine
     }
     else {
-      mines[randomRow][randomCell] = -1
+      mines[randomRow][randomColumn] = -1
       mineCount++
     }
   }

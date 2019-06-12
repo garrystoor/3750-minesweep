@@ -9,6 +9,9 @@
 	?>
 
 	<script type="text/javascript">
+	var imported = document.createElement('script');
+	imported.src = './sha256.js';
+	document.head.appendChild(imported);
 	function userLogin(usr, psswd){
 		//Database data types Salt, Username, Password
 			if(usr.length == 0){
@@ -17,13 +20,17 @@
 			if(psswd.length == 0){
 				psswd = "-1";
 			}
+			var hash = sha256(psswd);
+			for(var i = 0; i < 10; i++){
+				hash = sha256(hash);
+			}
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange= function() {
 				if (this.readyState == 4 && this.status == 200) {
 					document.getElementById("txtHint").innerHTML = this.responseText;
 				}
 			};
-			xmlhttp.open("GET", "login.php?submit=1&user="+usr+"&pass=" + psswd, true);
+			xmlhttp.open("GET", "login.php?submit=1&user="+usr+"&pass=" + hash, true);
 			xmlhttp.send();
 			setTimeout(function(){window.location.href = 'http://3750stoor.epizy.com/minesweep/login.php?submit=1'}, 500);
 		}
@@ -58,11 +65,16 @@
 	if ($_GET['submit'] == "1" ) {
 		if($_GET['user'] != "-1"){
 			$user=$_GET['user'];
-			$query = "SELECT Password FROM MinesweepUsers WHERE Username='$user'";
+			$query = "SELECT Password, Salt FROM MinesweepUsers WHERE Username='$user'";
 			$result = $conn->query($query);
 			if($result->num_rows > 0){
 				while($row = $result->fetch_assoc()){
-					if($row['Password'] == $_GET['pass']){
+					$toHash = $_GET['pass'] . "" . $row['Salt'];
+					for($i = 0; $i < 10; $i++){
+						$pass = hash('sha256', $toHash);
+						$toHash = $pass . "" . $row['Salt'];
+					}
+					if($row['Password'] == $pass){
 						$_SESSION['user'] = $_GET['user'];
 					}
 					else{
