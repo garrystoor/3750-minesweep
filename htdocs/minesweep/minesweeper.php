@@ -1,7 +1,10 @@
 <link rel="stylesheet" type="text/css" href="minesweeper.css">
 <?php
 session_start();
-session_destroy();
+
+  if($_SESSION['user'] == null){
+    header("Location: http://3750stoor.epizy.com/minesweep/login.php");
+  }
   // initialize the game board
 
   // set mines
@@ -14,6 +17,7 @@ session_destroy();
 */
 ?>
 <html>
+<body>
 <h2>Time is running out</h2>
 <h3>15</h3>
   <table id = "gameBoard" width=300px height=300px style="border:1px solid #000000;"></table>
@@ -146,4 +150,11 @@ function setMines(){
 
 
 </script>
+
+<form action="http://3750stoor.epizy.com/minesweep/login.php" method="get">
+    <input type="submit" value="Logout" name="logout" onclick="<?php
+      session_destroy();
+    ?>">
+  </form>
+</body>
 </html>

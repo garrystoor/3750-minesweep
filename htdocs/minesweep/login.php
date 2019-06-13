@@ -3,33 +3,34 @@
 <?php
 	session_start();
 
+	//check if user is already logged in
 	if($_SESSION['user'] != null){
 		header("Location: http://3750stoor.epizy.com/minesweep/minesweeper.php");
 	}
 	?>
 
 	<script type="text/javascript">
-	var imported = document.createElement('script');
-	imported.src = './sha256.js';
-	document.head.appendChild(imported);
-	function userLogin(usr, psswd){
-		//Database data types Salt, Username, Password
+		//import sha-256 script
+		var imported = document.createElement('script');
+		imported.src = './sha256.js';
+		document.head.appendChild(imported);
+		//create function that runs on button click
+		function userLogin(usr, psswd){
+			//make sure length of username is more than 0
 			if(usr.length == 0){
 				usr = "-1";
 			}
+			//make sure password length is more than 0
 			if(psswd.length == 0){
 				psswd = "-1";
 			}
+			//hash given password
 			var hash = sha256(psswd);
 			for(var i = 0; i < 10; i++){
 				hash = sha256(hash);
 			}
+			//open sub-page to verify information
 			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange= function() {
-				if (this.readyState == 4 && this.status == 200) {
-					document.getElementById("txtHint").innerHTML = this.responseText;
-				}
-			};
 			xmlhttp.open("GET", "login.php?submit=1&user="+usr+"&pass=" + hash, true);
 			xmlhttp.send();
 			setTimeout(function(){window.location.href = 'http://3750stoor.epizy.com/minesweep/login.php?submit=1'}, 500);
@@ -61,7 +62,7 @@
 	if($conn->connect_error){
 		die("Connection failed: " . $conn->connect_error);
 	}
-	
+
 	if ($_GET['submit'] == "1" ) {
 		if($_GET['user'] != "-1"){
 			$user=$_GET['user'];
