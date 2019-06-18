@@ -1,26 +1,33 @@
 <link rel="stylesheet" type="text/css" href="minesweeper.css">
 <?php
 session_start();
+  if($_SESSION['boardSet'] != true){
+    $_SESSION['mines'] = array();
+    setMines(12,14);
+  }
 
+  for($i = 0; $i < 12; $i++){
+    for($j = 0; $j < 12; $j++){
+      echo $_SESSION['mines'][$i][$j];
+    }
+  }
   if($_SESSION['user'] == null){
     header("Location: http://3750stoor.epizy.com/minesweep/login.php");
   }
-  // initialize the game board
-
-  // set mines
-  /*
-  $minesArray = array[81];
-  for(var i = 0; i < 81; i++) {
-    array[i] = 0;
-  }
-  $_Session['mines'];
-*/
 ?>
 <html>
 <body>
 <h2>Time is running out</h2>
-<h3>15</h3>
+<h3 id='timer'>15</h3>
   <table id = "gameBoard" width=300px height=300px style="border:1px solid #000000;"></table>
+
+  <?php
+  $boardSize = 12;
+  echo $boardSize;
+  $numMines = 14;
+
+  ?>
+
 <script>
   //disable context menu
   document.oncontextmenu = function() {
@@ -28,12 +35,14 @@ session_start();
 }
 
   // populate the table
-  var boardSize = 9
+  var boardSize = 12
+  var numMines = 14
   var tbl = document.getElementById('gameBoard')
   var row
   var cell
   var mines = new Array(boardSize)
   var boardIndex = 0
+
   // rows
   for(var i = 0; i < boardSize; i++) {
     row = tbl.insertRow(i)
@@ -68,7 +77,7 @@ function leftClickSquare(squareID){
   }
 
   else {
-    document.getElementById(squareID).style.backgroundColor = 'green'
+    document.getElementById(squareID).style.backgroundColor = '#f7ebe8' // linen color
     adjacentSquares(squareID)
     document.getElementById(squareID).clicked = true;
   }
@@ -77,7 +86,7 @@ function leftClickSquare(squareID){
 
 function rightClickSquare(squareID) {
   if(document.getElementById(squareID).flagged) {
-    document.getElementById(squareID).style.backgroundColor = 'blue'
+    document.getElementById(squareID).style.backgroundColor = '#ffa987' // vivid tangerine color
     document.getElementById(squareID).flagged = false
   }
   else if(!document.getElementById(squareID).clicked) {
@@ -133,7 +142,7 @@ function setMines(){
       mines[i][j] = 0
   }
   var mineCount = 0
-  while(mineCount < boardSize) {
+  while(mineCount < numMines) {
     var randomRow = Math.floor(Math.random() * boardSize);
     var randomColumn = Math.floor(Math.random() * boardSize)
     if (mines[randomRow][randomColumn] == -1){
@@ -147,14 +156,45 @@ function setMines(){
 
 }
 
-
-
 </script>
+<?php
 
-<form action="http://3750stoor.epizy.com/minesweep/login.php" method="get">
-    <input type="submit" value="Logout" name="logout" onclick="<?php
-      session_destroy();
-    ?>">
+  function setMines($boardSize, $numMines){
+    for($i = 0; $i < $boardSize; $i++){
+      for($j = 0; $j < $boardSize; $j++){
+        $_SESSION['mines'][$i][$j] = 0;
+      }
+    }
+    $mineCount = 0;
+    while($mineCount < $numMines) {
+      $randomRow = mt_rand(0, $boardSize - 1);
+      $randomColumn = mt_rand(0, $boardSize - 1);
+      if ($_SESSION['mines'][$randomRow][$randomColumn] == -1){
+        // already set to a mine
+      }
+      else {
+        $_SESSION['mines'][$randomRow][$randomColumn] = -1;
+        $mineCount++;
+      }
+    }
+    $_SESSION['boardSet'] = true;
+    //For seeing session variables in mines
+    //for($i = 0; $i < $boardSize; $i++){
+    //  for($j = 0; $j < $boardSize; $j++){
+    //    echo $_SESSION['mines'][$i][$j];
+    //  }
+    //}
+  }
+ ?>
+
+
+
+ <form action="logout.php">
+   <input type="submit" value="Logout">
+ </form>
+
+  <form action="highscore.php">
+    <input type="submit" value="To Highscores">
   </form>
 </body>
 </html>

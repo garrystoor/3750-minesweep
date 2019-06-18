@@ -90,6 +90,8 @@
 					<p>Bad username or password</p>
 				<?php
 			}
+
+			mysqli_close($con);
 		}
 		else{
 			?>
@@ -97,6 +99,10 @@
 			<?php
 		}
 	}
+
  ?>
+ <form action="highscore.php">
+	 <input type="submit" value="To Highscores">
+ </form>
  	</body>
 </html>

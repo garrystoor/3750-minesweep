@@ -101,6 +101,8 @@
 					<p>Password and Confirm Password field do not match or are blank</p>
 				<?php
 			}
+
+			mysqli_close($con);
 		}
 		else{
 			?>
@@ -109,5 +111,6 @@
 		}
 	}
  ?>
+
  	</body>
 </html>
