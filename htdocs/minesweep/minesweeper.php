@@ -5,10 +5,11 @@ session_start();
     $_SESSION['mines'] = array();
     setMines(12,14);
   }
-
   for($i = 0; $i < 12; $i++){
     for($j = 0; $j < 12; $j++){
-      echo $_SESSION['mines'][$i][$j];
+      echo $_SESSION['mines'][$i][$j]." ";
+      if ($j == 11)
+        echo "<br>";
     }
   }
   if($_SESSION['user'] == null){
@@ -160,12 +161,15 @@ function setMines(){
 <?php
 
   function setMines($boardSize, $numMines){
+    $mineCount = 0;
+    $surroundingBombs = 0;
+
     for($i = 0; $i < $boardSize; $i++){
       for($j = 0; $j < $boardSize; $j++){
         $_SESSION['mines'][$i][$j] = 0;
       }
     }
-    $mineCount = 0;
+
     while($mineCount < $numMines) {
       $randomRow = mt_rand(0, $boardSize - 1);
       $randomColumn = mt_rand(0, $boardSize - 1);
@@ -177,14 +181,46 @@ function setMines(){
         $mineCount++;
       }
     }
+
+    for($i = 0; $i < $boardSize; $i++){
+      for($j = 0; $j < $boardSize; $j++){
+        if($_SESSION['mines'][$i][$j] == -1) {
+          //Do nothing, it's already set
+        }
+        else {
+
+          if($i != 0){
+            if ($_SESSION['mines'][$i-1][$j-1] == -1)
+              $surroundingBombs++;
+            if ($_SESSION['mines'][$i-1][$j] == -1)
+              $surroundingBombs++;
+            if ($_SESSION['mines'][$i-1][$j+1] == -1)
+              $surroundingBombs++;
+          }
+
+          if ($_SESSION['mines'][$i][$j-1] == -1)
+            $surroundingBombs++;
+          if ($_SESSION['mines'][$i][$j+1] == -1)
+            $surroundingBombs++;
+
+          if($i != $boardSize-1){
+            if ($_SESSION['mines'][$i+1][$j-1] == -1)
+              $surroundingBombs++;
+            if ($_SESSION['mines'][$i+1][$j] == -1)
+              $surroundingBombs++;
+            if ($_SESSION['mines'][$i+1][$j+1] == -1)
+              $surroundingBombs++;
+          }
+
+          $_SESSION['mines'][$i][$j] = $surroundingBombs;
+          $surroundingBombs = 0;
+      }
+    }
+
     $_SESSION['boardSet'] = true;
-    //For seeing session variables in mines
-    //for($i = 0; $i < $boardSize; $i++){
-    //  for($j = 0; $j < $boardSize; $j++){
-    //    echo $_SESSION['mines'][$i][$j];
-    //  }
-    //}
   }
+}
+
  ?>
 
 
