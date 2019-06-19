@@ -66,6 +66,7 @@ session_start();
     echo "var clickOrFlag = " .$js_clickOrFlag . ";\n";
     ?>
   // rows
+  tbl.style.display = "none"
   for(var i = 0; i < boardSize; i++) {
     row = tbl.insertRow(i)
     // columns
@@ -87,6 +88,7 @@ session_start();
       }
     }
   }
+  setTimeout(function(){ tbl.style.display = "table" }, 3000);
 
 function leftClickSquare(squareID){
 
@@ -101,7 +103,6 @@ document.getElementById(squareID).clicked || win) {
       document.getElementById(squareID).clicked = true
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
-        loading = true
         if (this.readyState == 4 && this.status == 200) {
 
           if (this.responseText == '-1'){
@@ -126,7 +127,6 @@ document.getElementById(squareID).clicked || win) {
             }
           }
         }
-        loading = false
       };
       xhttp.open("GET", "getcell.php?query=1&x=" + myRow + "&y=" + myColumn, true);
       xhttp.send();
@@ -137,7 +137,7 @@ document.getElementById(squareID).clicked || win) {
 function rightClickSquare(squareID) {
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
-  if(win||loading){
+  if(win){
     return
   }
 
