@@ -51,11 +51,13 @@ session_start();
 }
 
   // populate the table
+  var win
   var boardSize = 12
   var numMines = 14
   var tbl = document.getElementById('gameBoard')
   var row
   var cell
+  var loading
   var mines = new Array(boardSize)
   var boardIndex = 0
   var clearedCells = 0
@@ -91,7 +93,6 @@ function leftClickSquare(squareID){
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
 
-
   if(document.getElementById(squareID).flagged == true ||
 document.getElementById(squareID).clicked == true) {
     // already flagged or clicked
@@ -100,6 +101,7 @@ document.getElementById(squareID).clicked == true) {
       document.getElementById(squareID).clicked = true
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
+        loading = true
         if (this.readyState == 4 && this.status == 200) {
 
           if (this.responseText == '-1'){
@@ -120,9 +122,11 @@ document.getElementById(squareID).clicked == true) {
             if(clearedCells == boardSize*boardSize-numMines){
               //TODO: Win Code
               document.getElementById("shobu").innerHTML = "You Win!"
+              win = true;
             }
           }
         }
+        loading = false
       };
       xhttp.open("GET", "getcell.php?query=1&x=" + myRow + "&y=" + myColumn, true);
       xhttp.send();
@@ -133,6 +137,9 @@ document.getElementById(squareID).clicked == true) {
 function rightClickSquare(squareID) {
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
+  if(win||loading){
+    return
+  }
 
   if(document.getElementById(squareID).flagged) {
     document.getElementById(squareID).style.backgroundColor = '#ffa987' // vivid tangerine color
