@@ -108,10 +108,8 @@ document.getElementById(squareID).clicked == true) {
             //TODO: Game Over Code
             document.getElementById("shobu").innerHTML = "You Lose!"
             for(var i = 0; i < boardSize*boardSize; i++){
-              if(i != squareID){
                 document.getElementById(i).flagged = false
                 leftClickSquare(i)
-              }
             }
           }
           else {
