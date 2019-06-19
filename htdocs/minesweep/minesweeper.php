@@ -90,10 +90,10 @@ function leftClickSquare(squareID){
 
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
+  document.getElementById(squareID).clicked = true
 
-
-  if(document.getElementById(squareID).style.backgroundColor == 'red' ||
-document.getElementById(squareID).style.backgroundColor == '#f7ebe8') {
+  if(document.getElementById(squareID).flagged == true ||
+document.getElementById(squareID).clicked == true) {
     // already flagged or clicked
   }
   else {
