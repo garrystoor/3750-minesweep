@@ -3,15 +3,23 @@
 session_start();
   if($_SESSION['boardSet'] != true){
     $_SESSION['mines'] = array();
+    $_SESSION['clickOrFlag'] = array();
     setMines(12,14);
   }
-  for($i = 0; $i < 12; $i++){
-    for($j = 0; $j < 12; $j++){
-      echo $_SESSION['mines'][$i][$j]." ";
-      if ($j == 11)
-        echo "<br>";
-    }
-  }
+  // for($i = 0; $i < 12; $i++){
+  //   for($j = 0; $j < 12; $j++){
+  //     echo $_SESSION['mines'][$i][$j]." ";
+  //     if ($j == 11)
+  //       echo "<br>";
+  //   }
+  // }
+  // for($i = 0; $i < 12; $i++){
+  //   for($j = 0; $j < 12; $j++){
+  //     echo $_SESSION['clickOrFlag'][$i][$j]." ";
+  //     if ($j == 11)
+  //       echo "<br>";
+  //   }
+  // }
   if($_SESSION['user'] == null){
     header("Location: http://3750stoor.epizy.com/minesweep/login.php");
   }
@@ -21,10 +29,17 @@ session_start();
 <h2>Time is running out</h2>
 <h3 id='timer'>15</h3>
   <table id = "gameBoard" width=300px height=300px style="border:1px solid #000000;"></table>
+  <p id="shobu"></p>
 
+   <form action="logout.php">
+     <input type="submit" value="Logout">
+   </form>
+
+    <form action="highscore.php">
+      <input type="submit" value="To Highscores">
+    </form>
   <?php
   $boardSize = 12;
-  echo $boardSize;
   $numMines = 14;
 
   ?>
@@ -43,7 +58,11 @@ session_start();
   var cell
   var mines = new Array(boardSize)
   var boardIndex = 0
-
+  var clearedCells = 0
+  <?php
+    $js_clickOrFlag = json_encode($_SESSION['clickOrFlag']);
+    echo "var clickOrFlag = " .$js_clickOrFlag . ";\n";
+    ?>
   // rows
   for(var i = 0; i < boardSize; i++) {
     row = tbl.insertRow(i)
@@ -58,103 +77,69 @@ session_start();
       //cell.addEventListener("click",function(){clickSquare(cell.id)})
       cell.setAttribute("onclick","leftClickSquare(" + cell.id + ")")
       cell.setAttribute("oncontextmenu","rightClickSquare(" + cell.id + ")")
+      if(clickOrFlag[i][j] == 1){
+        leftClickSquare(cell.id)
+      }
+      else if(clickOrFlag[i][j] == 2){
+        rightClickSquare(cell.id)
+      }
     }
   }
 
-
-setMines()
-
-
 function leftClickSquare(squareID){
+
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
-  if(document.getElementById(squareID).style.backgroundColor == 'red') {
-    // already flagged
-  }
-  else if(mines[myRow][myColumn] == -1) {
-    document.getElementById(squareID).style.backgroundColor = 'black'
-    document.getElementById(squareID).clicked = true;
-    //TODO: IMPLEMENT GAME OVER CODE
-  }
 
+
+  if(document.getElementById(squareID).style.backgroundColor == 'red' ||
+document.getElementById(squareID).style.backgroundColor == '#f7ebe8') {
+    // already flagged or clicked
+  }
   else {
-    document.getElementById(squareID).style.backgroundColor = '#f7ebe8' // linen color
-    adjacentSquares(squareID)
-    document.getElementById(squareID).clicked = true;
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById(squareID).innerHTML = this.responseText;
+          if (this.responseText == '-1'){
+            document.getElementById(squareID).style.backgroundColor = 'black' //mine
+            //TODO: Game Over Code
+            document.getElementById("shobu").innerHTML = "You Lose!"
+          }
+          else {
+            document.getElementById(squareID).style.backgroundColor = '#f7ebe8' // linen color
+            clearedCells++
+            if(clearedCells == boardSize*boardSize-numMines){
+              //TODO: Win Code
+              document.getElementById("shobu").innerHTML = "You Win!"
+            }
+          }
+        }
+      };
+      xhttp.open("GET", "getcell.php?query=1&x=" + myRow + "&y=" + myColumn, true);
+      xhttp.send();
   }
 
 }
 
 function rightClickSquare(squareID) {
+  var myRow = document.getElementById(squareID).row
+  var myColumn = document.getElementById(squareID).column
+
   if(document.getElementById(squareID).flagged) {
     document.getElementById(squareID).style.backgroundColor = '#ffa987' // vivid tangerine color
     document.getElementById(squareID).flagged = false
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "getcell.php?query=3&x=" + myRow + "&y=" + myColumn, true);
+    xhttp.send();
   }
   else if(!document.getElementById(squareID).clicked) {
     document.getElementById(squareID).style.backgroundColor = 'red'
     document.getElementById(squareID).flagged = true
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "getcell.php?query=2&x=" + myRow + "&y=" + myColumn, true);
+    xhttp.send();
   }
-}
-
-function adjacentSquares(squareID){
-  var myRow = document.getElementById(squareID).row
-  var myColumn = document.getElementById(squareID).column
-  var surroundingBombs = 0
-  if(mines[myRow][myColumn] == -1) {
-    //Game Over, adjacentSquares shouldn't be called here
-  }
-  else {
-
-    if(myRow != 0){
-      if (mines[myRow-1][myColumn-1] == -1)
-        surroundingBombs++
-      if (mines[myRow-1][myColumn] == -1)
-        surroundingBombs++
-      if (mines[myRow-1][myColumn+1] == -1)
-        surroundingBombs++
-    }
-
-    if (mines[myRow][myColumn-1] == -1)
-      surroundingBombs++
-    if (mines[myRow][myColumn+1] == -1)
-      surroundingBombs++
-
-    if(myRow != boardSize-1){
-      if (mines[myRow+1][myColumn-1] == -1)
-        surroundingBombs++
-      if (mines[myRow+1][myColumn] == -1)
-        surroundingBombs++
-      if (mines[myRow+1][myColumn+1] == -1)
-        surroundingBombs++
-    }
-
-    mines[myRow][myColumn] = surroundingBombs
-    document.getElementById(squareID).innerHTML = surroundingBombs
-  }
-}
-
-function setMines(){
-  for (var i = 0; i < mines.length; i++) {
-    mines[i] = new Array(boardSize);
-}
-
-  for(var i = 0; i < boardSize; i++){
-    for(var j = 0; j < boardSize; j++)
-      mines[i][j] = 0
-  }
-  var mineCount = 0
-  while(mineCount < numMines) {
-    var randomRow = Math.floor(Math.random() * boardSize);
-    var randomColumn = Math.floor(Math.random() * boardSize)
-    if (mines[randomRow][randomColumn] == -1){
-      // already set to a mine
-    }
-    else {
-      mines[randomRow][randomColumn] = -1
-      mineCount++
-    }
-  }
-
 }
 
 </script>
@@ -167,6 +152,7 @@ function setMines(){
     for($i = 0; $i < $boardSize; $i++){
       for($j = 0; $j < $boardSize; $j++){
         $_SESSION['mines'][$i][$j] = 0;
+          $_SESSION['clickOrFlag'][$i][$j] = 0;
       }
     }
 
@@ -222,15 +208,5 @@ function setMines(){
 }
 
  ?>
-
-
-
- <form action="logout.php">
-   <input type="submit" value="Logout">
- </form>
-
-  <form action="highscore.php">
-    <input type="submit" value="To Highscores">
-  </form>
 </body>
 </html>
