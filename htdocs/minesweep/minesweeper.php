@@ -93,9 +93,9 @@ function leftClickSquare(squareID){
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
 
-  if(document.getElementById(squareID).flagged == true ||
-document.getElementById(squareID).clicked == true) {
-    // already flagged or clicked
+  if(document.getElementById(squareID).flagged ||
+document.getElementById(squareID).clicked || win) {
+    // already flagged, clicked, or won
   }
   else {
       document.getElementById(squareID).clicked = true
