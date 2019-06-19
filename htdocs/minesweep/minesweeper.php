@@ -90,21 +90,29 @@ function leftClickSquare(squareID){
 
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
-  document.getElementById(squareID).clicked = true
+
 
   if(document.getElementById(squareID).flagged == true ||
 document.getElementById(squareID).clicked == true) {
     // already flagged or clicked
   }
   else {
+      document.getElementById(squareID).clicked = true
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
           document.getElementById(squareID).innerHTML = this.responseText;
           if (this.responseText == '-1'){
+            clearedCells = -(boardSize*boardSize)
             document.getElementById(squareID).style.backgroundColor = 'black' //mine
             //TODO: Game Over Code
             document.getElementById("shobu").innerHTML = "You Lose!"
+            for(var i = 0; i < boardSize*boardSize; i++){
+              if(i != squareID){
+                document.getElementById(i).flagged = false
+                leftClickSquare(i)
+              }
+            }
           }
           else {
             document.getElementById(squareID).style.backgroundColor = '#f7ebe8' // linen color
