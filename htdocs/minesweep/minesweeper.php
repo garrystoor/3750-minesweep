@@ -101,7 +101,7 @@ document.getElementById(squareID).clicked == true) {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          document.getElementById(squareID).innerHTML = this.responseText;
+
           if (this.responseText == '-1'){
             clearedCells = -(boardSize*boardSize)
             document.getElementById(squareID).style.backgroundColor = 'black' //mine
@@ -113,6 +113,8 @@ document.getElementById(squareID).clicked == true) {
             }
           }
           else {
+            if(this.responseText != 0)
+              document.getElementById(squareID).innerHTML = this.responseText;
             document.getElementById(squareID).style.backgroundColor = '#f7ebe8' // linen color
             clearedCells++
             if(clearedCells == boardSize*boardSize-numMines){
