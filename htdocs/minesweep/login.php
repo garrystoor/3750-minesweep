@@ -102,7 +102,7 @@
 
  ?>
  <form action="highscore.php">
-	 <input type="submit" value="To Highscores">
+	 <input type="submit" value="Highscores">
  </form>
  	</body>
 </html>

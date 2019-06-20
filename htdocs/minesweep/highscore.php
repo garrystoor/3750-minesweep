@@ -65,8 +65,8 @@
   }
   else{
     ?>
-    <form action="minesweeper.php">
-    	<input type="submit" value="New Game">
+    <form action="newGame.php">
+      <input type="submit" value="New Game">
     </form>
     <form action="minesweeper.php">
     	<input type="submit" value="Continue">
