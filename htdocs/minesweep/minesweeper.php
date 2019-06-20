@@ -3,24 +3,10 @@
 session_start();
   if($_SESSION['boardSet'] != true){
     $_SESSION['mines'] = array();
-    $_SESSION['clickOrFlag'] = array();
     $_SESSION['clickedValues'] = array();
     setMines(12,14);
   }
-  // for($i = 0; $i < 12; $i++){
-  //   for($j = 0; $j < 12; $j++){
-  //     echo $_SESSION['mines'][$i][$j]." ";
-  //     if ($j == 11)
-  //       echo "<br>";
-  //   }
-  // }
-  // for($i = 0; $i < 12; $i++){
-  //   for($j = 0; $j < 12; $j++){
-  //     echo $_SESSION['clickOrFlag'][$i][$j]." ";
-  //     if ($j == 11)
-  //       echo "<br>";
-  //   }
-  // }
+
   if($_SESSION['user'] == null){
     header("Location: http://3750stoor.epizy.com/minesweep/login.php");
   }
@@ -32,7 +18,6 @@ session_start();
     for($i = 0; $i < $boardSize; $i++){
       for($j = 0; $j < $boardSize; $j++){
           $_SESSION['mines'][$i][$j] = 0;
-          $_SESSION['clickOrFlag'][$i][$j] = 0;
           $_SESSION['clickedValues'][$i][$j] = 0;
       }
     }
@@ -135,10 +120,6 @@ session_start();
   var mines = new Array(boardSize)
   var boardIndex = 0
   var clearedCells = 0
-  <?php
-    $js_clickOrFlag = json_encode($_SESSION['clickOrFlag']);
-    echo "var clickOrFlag = " .$js_clickOrFlag . ";\n";
-    ?>
     <?php
       $js_clickedValues = json_encode($_SESSION['clickedValues']);
       echo "var clickedValues = " .$js_clickedValues . ";\n";

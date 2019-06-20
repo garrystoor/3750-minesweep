@@ -3,7 +3,6 @@ session_start();
 if ($_GET['query'] == "1" ) {
   $x = $_GET['x'];
   $y = $_GET['y'];
-  $_SESSION['clickOrFlag'][$x][$y] = 1;
   if($_SESSION['mines'][$x][$y] != 0) {
     $_SESSION['clickedValues'][$x][$y] = $_SESSION['mines'][$x][$y];
   }
