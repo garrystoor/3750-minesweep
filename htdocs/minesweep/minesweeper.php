@@ -1,10 +1,11 @@
 <link rel="stylesheet" type="text/css" href="minesweeper.css">
 <?php
-session_start();
+  session_start();
   if($_SESSION['boardSet'] != true){
     $_SESSION['mines'] = array();
     $_SESSION['clickedValues'] = array();
     setMines(12,14);
+    $_SESSION['currTime'] = 0;
   }
 
   if($_SESSION['user'] == null){
@@ -66,20 +67,20 @@ session_start();
 
           $_SESSION['mines'][$i][$j] = $surroundingBombs;
           $surroundingBombs = 0;
+        }
       }
-    }
 
     $_SESSION['boardSet'] = true;
+    }
   }
-}
 
  ?>
 
 
 <html>
 <body>
-<h2>Time is running out</h2>
-<h3 id='timer'>15</h3>
+<h2>Minesweeper</h2>
+<h3 id='timer'>Time: </h3>
   <table id = "gameBoard" width=300px height=300px style="border:1px solid #000000;"></table>
   <p id="shobu"></p>
 
@@ -110,8 +111,12 @@ session_start();
   return false;
 }
 
+  // initalize time
+  var currTime = <?php echo $_SESSION['currTime']?>
+
   // populate the table
   var win
+  var lose
   var boardSize = 12
   var numMines = 14
   var tbl = document.getElementById('gameBoard')
@@ -157,6 +162,17 @@ session_start();
     }
   }
   //setTimeout(function(){ tbl.style.display = "table" }, 3000);
+
+setInterval(updateTime, 1000)
+function updateTime() {
+    if(win || lose){}
+    else{
+      var xhttp = new XMLHttpRequest()
+      xhttp.open("GET", "getcell.php?query=5&currTime=" + currTime, true)
+      xhttp.send()
+      document.getElementById('timer').innerHTML = "Time: " + currTime++
+    }
+}
 
 function leftClickSquare(squareID){
 
@@ -219,7 +235,7 @@ document.getElementById(squareID).clicked || win) {
 function rightClickSquare(squareID) {
   var myRow = document.getElementById(squareID).row
   var myColumn = document.getElementById(squareID).column
-  if(win){
+  if(win||lose){
     return
   }
 
@@ -258,14 +274,20 @@ function lostGame(){
       }
     }
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "getcell.php?query=4", true);
+    xhttp.open("GET", "getcell.php?query=6", true);
     xhttp.send();
+    lose = true
 }
 
 function wonGame(){
   //TODO: Win Code
   document.getElementById("shobu").innerHTML = "You Win!"
   win = true
+  var finalScore = currTime - 1
+  var xhttp = new XMLHttpRequest()
+  xhttp.open("GET", "getcell.php?query=4&finalScore=" + finalScore, true)
+  xhttp.send()
+
 }
 
 </script>

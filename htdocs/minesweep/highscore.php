@@ -28,14 +28,20 @@
 		{
 			if($count <= 10){
 				if($count == 10){
-					if($row["Score"] > 9){
+          if($row["Score"] > 99){
+            echo $count . "   | " . $row["Score"] . "   | " . $row["User"] . "<br>";
+          }
+					else if($row["Score"] > 9){
 						echo $count . "   | " . $row["Score"] . "    | " . $row["User"] . "<br>";
 					}
 					else{
 						echo $count . "   | " . $row["Score"] . "     | " . $row["User"] . "<br>";
 					}
 				}else{
-					if($row["Score"] > 9){
+          if($row["Score"] > 99){
+            echo $count . "    | " . $row["Score"] . "   | " . $row["User"] . "<br>";
+          }
+					else if($row["Score"] > 9){
 						echo $count . "    | " . $row["Score"] . "    | " . $row["User"] . "<br>";
 					}
 					else{
