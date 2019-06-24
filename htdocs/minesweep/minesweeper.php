@@ -167,7 +167,9 @@ function updateTime() {
     if(win || lose){}
     else{
       var xhttp = new XMLHttpRequest()
+
       xhttp.open("GET", "getcell.php?query=5&currTime=" + currTime, true)
+      xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest")
       xhttp.send()
       document.getElementById('timer').innerHTML = "Time: " + currTime++
     }
@@ -185,6 +187,7 @@ document.getElementById(squareID).clicked || win) {
   else {
       document.getElementById(squareID).clicked = true
       var xhttp = new XMLHttpRequest();
+
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
 
@@ -226,6 +229,7 @@ document.getElementById(squareID).clicked || win) {
         }
       };
       xhttp.open("GET", "getcell.php?query=1&x=" + myRow + "&y=" + myColumn, true);
+      xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest")
       xhttp.send();
   }
 
@@ -242,14 +246,18 @@ function rightClickSquare(squareID) {
     document.getElementById(squareID).style.backgroundColor = '#ffa987' // vivid tangerine color
     document.getElementById(squareID).flagged = false
     var xhttp = new XMLHttpRequest();
+
     xhttp.open("GET", "getcell.php?query=3&x=" + myRow + "&y=" + myColumn, true);
+    xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     xhttp.send();
   }
   else if(!document.getElementById(squareID).clicked) {
     document.getElementById(squareID).style.backgroundColor = 'red'
     document.getElementById(squareID).flagged = true
     var xhttp = new XMLHttpRequest();
+
     xhttp.open("GET", "getcell.php?query=2&x=" + myRow + "&y=" + myColumn, true);
+    xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     xhttp.send();
   }
 }
@@ -257,6 +265,7 @@ function rightClickSquare(squareID) {
 function lostGame(){
   var squareID = 0
   var xhttp = new XMLHttpRequest();
+
   xhttp.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200) {
       mines = JSON.parse(this.responseText)
@@ -271,6 +280,7 @@ function lostGame(){
     }
   }
   xhttp.open("GET", "getcell.php?query=6", true);
+  xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest")
   xhttp.send();
 
     document.getElementById("shobu").innerHTML = "You Lose!"
@@ -283,7 +293,9 @@ function wonGame(){
   win = true
   var finalScore = currTime - 1
   var xhttp = new XMLHttpRequest()
+
   xhttp.open("GET", "getcell.php?query=4&finalScore=" + finalScore, true)
+  xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest")
   xhttp.send()
 
 }
