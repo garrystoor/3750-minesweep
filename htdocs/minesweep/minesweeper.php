@@ -73,7 +73,6 @@
     $_SESSION['boardSet'] = true;
     }
   }
-
  ?>
 
 
@@ -257,22 +256,26 @@ function rightClickSquare(squareID) {
 
 function lostGame(){
   var squareID = 0
-
-  <?php
-    $js_mines = json_encode($_SESSION['mines']);
-    echo "var mines = " .$js_mines . ";\n";
-    ?>
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200) {
+      mines = JSON.parse(this.responseText)
+      for(var i = 0; i < boardSize; i++) {
+        for(var j = 0; j < boardSize; j++) {
+          document.getElementById(squareID).clicked = true
+          if (mines[i][j] == -1 && !(document.getElementById(squareID).flagged))
+            document.getElementById(squareID).style.backgroundColor = 'black'
+          squareID++
+        }
+      }
+    }
+  }
+  xhttp.open("GET", "getcell.php?query=7", true);
+  xhttp.send();
 
     document.getElementById("shobu").innerHTML = "You Lose!"
 
-    for(var i = 0; i < boardSize; i++) {
-      for(var j = 0; j < boardSize; j++) {
-        document.getElementById(squareID).clicked = true
-        if (mines[i][j] == -1 && !(document.getElementById(squareID).flagged))
-          document.getElementById(squareID).style.backgroundColor = 'black'
-        squareID++
-      }
-    }
+
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "getcell.php?query=6", true);
     xhttp.send();

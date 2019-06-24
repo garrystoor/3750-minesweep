@@ -45,4 +45,8 @@ else if($_GET['query'] == "5") {
 else if($_GET['query'] == "6") {
   $_SESSION['boardSet'] = false;
 }
+else if($_GET['query'] == "7") {
+  $js_mines = json_encode($_SESSION['mines']);
+  echo $js_mines;
+}
 ?>
