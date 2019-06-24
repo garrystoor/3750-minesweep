@@ -270,15 +270,10 @@ function lostGame(){
       }
     }
   }
-  xhttp.open("GET", "getcell.php?query=7", true);
+  xhttp.open("GET", "getcell.php?query=6", true);
   xhttp.send();
 
     document.getElementById("shobu").innerHTML = "You Lose!"
-
-
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "getcell.php?query=6", true);
-    xhttp.send();
     lose = true
 }
 
