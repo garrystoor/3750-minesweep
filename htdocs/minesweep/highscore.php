@@ -11,11 +11,6 @@
 		die("Connection failed: " . $conn->connect_error);
 	}
 
-  function logout(){
-    session_destroy();
-    header("Location: http://3750stoor.epizy.com/minesweep/login.php");
-  }
-
 	$rank = 0;
 
 	$query = "SELECT User, Score FROM MinesweepScores ORDER BY Score";
@@ -74,12 +69,15 @@
     <form action="newGame.php">
       <input type="submit" value="New Game">
     </form>
-    <form action="minesweeper.php">
-    	<input type="submit" value="Continue">
-    </form>
-    <form action="http://3750stoor.epizy.com/minesweep/highscore.php" method="get">
-      <input type="submit" value="Logout" name="logout">
-    </form>
+	<?php
+		if($_SESSION['boardSet'] == true){ ?>
+		<form action="minesweeper.php">
+			<input type="submit" value="Continue">
+		</form>
+	<?php } ?>
+    <form action="logout.php">
+     <input type="submit" value="Logout">
+   </form>
   <?php
   }
   ?>
